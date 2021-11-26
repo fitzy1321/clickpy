@@ -4,10 +4,12 @@ from unittest.mock import MagicMock
 
 import clickpy
 import typer
-from clickpy.click_strategy import BasicClickStrategy
 from clickpy.exception import ClickStrategyNotFound
+from clickpy.strategy import BasicClickStrategy, ClickStrategy
 from pytest_mock import MockerFixture
 from typer.testing import CliRunner
+
+from . import basic_name
 
 app = typer.Typer()
 app.command()(clickpy.main)
@@ -18,17 +20,17 @@ runner = CliRunner()
 # Helper Functions
 def _make_and_mock_basic_click(
     mocker: MockerFixture, fast=False, debug=False
-) -> Tuple[BasicClickStrategy, MagicMock, MagicMock]:
+) -> Tuple[ClickStrategy, MagicMock, MagicMock]:
     """Create a basic click object and factory mock.
 
     Returns:
         (BasicClickStrategy, Mock for factory, Mock for auto_click)
     """
-    basic_click = BasicClickStrategy(fast=fast, debug=debug)
+    basic_click = ClickStrategy(name=basic_name, fast=fast, debug=debug)
     return (
         basic_click,
-        mocker.patch("clickpy.click_strategy_factory", return_value=basic_click),
-        mocker.patch("clickpy.auto_click", side_effect=KeyboardInterrupt),
+        mocker.patch("clickpy.strategy.ClickStrategy.new", return_value=basic_click),
+        mocker.patch("clickpy.strategy.BasicClickStrategy.click", side_effect=KeyboardInterrupt),
     )
 
 
@@ -48,7 +50,6 @@ def test_main_no_options(mocker: MockerFixture) -> None:  # noqa
         result.stdout
         == """Running clickpy. Enter ctrl+c to stop.
 
-Back to work!
 """
     )
     mock_factory.assert_called_once_with(click_type=None, fast=False, debug=False)

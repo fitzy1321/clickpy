@@ -15,16 +15,18 @@ class ClickStrategy:
     _click_types = {}
 
     def __init_subclass__(cls, name: str):
-        """This will be called when another class inherits from ClickStrategy.
+        """Call this dunder method when another class inherits from ClickStrategy.
 
-        ie `class Something(ClickStrategy):` <- this line
+        ie `class Something(ClickStrategy, name=""):` <- this line
         """
         cls._click_types[name] = cls
 
     def __new__(cls, name: str, **_):
-        """This dunder method actually creates the object.
+        """Create an object which subclasses ClickStrategy from the class dict.
 
-        `__init__()` sets up the object.
+        `__init__()` is for initializing instance variables.
+        '__new__()` actually creates and returns the references object.
+        We're using it here to return a subclass of ClickStrategy.
         """
         try:
             subclass = cls._click_types[name]
@@ -57,7 +59,7 @@ class ClickStrategy:
     @classmethod
     def list_strat_names(cls):
         """Get list of available click strategies."""
-        return list(map(lambda c: c, cls._click_types.keys()))
+        return list(cls._click_types.keys())
 
 
 class BasicClickStrategy(ClickStrategy, name="basic"):  # this line will trigger __init_subclass__

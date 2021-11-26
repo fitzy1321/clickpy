@@ -69,7 +69,6 @@ def main(
         if debug:
             typer.echo("KeyboardInterrupt thrown and caught. Exiting script.")
 
-    typer.echo("~~ Peace, out ~~")
     raise typer.Exit(code=exit_code)
 
 
