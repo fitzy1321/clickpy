@@ -1,5 +1,7 @@
 # clickpy
 
+[![Latest Version](https://pypip.in/version/clickpy/badge.svg)](https://pypi.python.org/pypi/clickpy/)
+
 Automated mouse clicker script using [PyAutoGUI][1] and [Typer][2].
 
 This app will randomly click your mouse between 1 second and 3 minutes, to prevent your screen and apps from sleeping or displaying an `away` status.
