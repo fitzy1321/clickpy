@@ -9,7 +9,7 @@ from . import randint_patch_str, sleep_patch_str
 
 def test_NaturalClickStrategy_is_ClickProtocol():
     """Make sure NaturalClickStrategy implements ClickProtocol."""
-    assert isinstance(NaturalClickStrategy(name=name), ClickStrategy)
+    assert isinstance(NaturalClickStrategy(), ClickStrategy)  # type: ignore
 
 
 def test_NaturalClickStrategy_works(mocker: MockerFixture):

@@ -1,22 +1,48 @@
 """Clickpy, Automated mouse clicking scripts."""
-
-from typing import Optional
-
 import typer
 
 from clickpy.exception import ClickStrategyNotFound
-from clickpy.strategy import BasicClickStrategy, ClickStrategy, NaturalClickStrategy
+from clickpy.strategy import (
+    CLICK_STRAEGIES,
+    DEFAULT_STRATEGY,
+    BasicClickStrategy,
+    ClickStrategy,
+    NaturalClickStrategy,
+    generate_click_strategy,
+)
 
-# TODO: review tests for everything
+__all__ = [
+    "CLICK_STRAEGIES",
+    "DEFAULT_STRATEGY",
+    "BasicClickStrategy",
+    "ClickStrategy",
+    "NaturalClickStrategy",
+    "generate_click_strategy",
+]
 
-__all__ = ["BasicClickStrategy", "NaturalClickStrategy", "ClickStrategyNotFound"]
+
+def print_version(value: bool) -> None:
+    if not value:
+        return
+
+    import importlib.metadata
+
+    _DISTRIBUTION_METADATA = importlib.metadata.metadata("clickpy")
+
+    print(f"clickpy: version {_DISTRIBUTION_METADATA['Version']}")
+    raise typer.Exit(0)
 
 
-def print_startegy_names():
-    """Get simplified names of all strategies and print them to stdout."""
-    typer.echo("Available click types:\n")
-    for name in ClickStrategy.list_strat_names():
+def print_list(value: bool) -> None:
+    if not value:
+        return
+
+        """Get simplified names of all strategies and print them to stdout."""
+    typer.echo("\nAvailable click types:")
+    for name in CLICK_STRAEGIES:
         typer.echo(name)
+    typer.echo()  # extra newline
+    raise typer.Exit(0)
 
 
 # It's okay to use function calls here, because main should only be called once
@@ -25,14 +51,24 @@ def print_startegy_names():
 def main(
     debug: bool = typer.Option(False, "--debug", "-d", show_default=False),  # noqa
     fast: bool = typer.Option(False, "--fast", "-f", show_default=False),  # noqa
-    list_clicks: bool = typer.Option(  # noqa
+    version: bool = typer.Option(  # noqa
+        False,
+        "--version",
+        "-v",
+        show_default=False,
+        callback=print_version,
+        is_eager=True,
+    ),
+    list_clickers: bool = typer.Option(  # noqa
         False,
         "--list",
         "-l",
         help="Print a list of all available clicker types.",
         show_default=False,
+        callback=print_list,
+        is_eager=True,
     ),
-    click_type: Optional[str] = typer.Option(None, "--type", "-t", show_default=False),  # noqa
+    click_type: str = typer.Option(DEFAULT_STRATEGY, "--type", "-t"),  # noqa
 ):
     """Clickpy, Automated mouse clicking with python."""
     message = "Running clickpy. Enter ctrl+c to stop.\n"
@@ -41,19 +77,15 @@ def main(
         message += f"""\nArgument list:
 {debug=}
 {fast=}
-{list_clicks=}
+{list_clickers=}
 {click_type=}
 """
 
     typer.echo(message)
 
     exit_code = 0
-    if list_clicks:
-        print_startegy_names()
-        typer.Exit(exit_code)
-
     try:
-        click_strategy = ClickStrategy.new(click_name=click_type, fast=fast, debug=debug)
+        click_strategy = generate_click_strategy(click_type=click_type, debug=debug, fast=fast)
         if debug:
             typer.echo(f"\nClick Strategy being used: {type(click_strategy)}\n")
 
@@ -61,17 +93,12 @@ def main(
             click_strategy.click()
 
     except ClickStrategyNotFound:
-        typer.echo(f"Argument {click_type!r} is not a valid clicker type.")
-        print_startegy_names()
+        typer.echo(f"Argument {click_type!r} is not a valid clicker type.", err=True)
         exit_code = 1
 
     except KeyboardInterrupt:
         if debug:
             typer.echo("KeyboardInterrupt thrown and caught. Exiting script.")
 
+    typer.echo("\n~~ Peace, out ~~")
     raise typer.Exit(code=exit_code)
-
-
-def run():
-    """Run clickpy cli with typer."""
-    typer.run(main)  # pragma: no cover

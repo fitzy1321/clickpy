@@ -1,6 +1,7 @@
 # noqa
 
-from clickpy.strategy import BasicClickStrategy, ClickStrategy
+from clickpy import BasicClickStrategy
+from clickpy.strategy import ClickStrategy
 from pytest import CaptureFixture
 from pytest_mock import MockerFixture
 
@@ -9,7 +10,7 @@ from . import click_patch_str, randint_patch_str, sleep_patch_str
 
 
 def test_BasicClickStrategy_is_SupportsClick():  # noqa
-    assert isinstance(BasicClickStrategy(name=name), ClickStrategy)
+    assert isinstance(BasicClickStrategy(), ClickStrategy)
 
 
 def test_BasicClickStrategy_sets_fast_sleep_time(mocker: MockerFixture):  # noqa
@@ -18,7 +19,7 @@ def test_BasicClickStrategy_sets_fast_sleep_time(mocker: MockerFixture):  # noqa
     mock_gui_click = mocker.patch(click_patch_str)
 
     # Act
-    basic_click = BasicClickStrategy(fast=True, name=name)
+    basic_click = BasicClickStrategy(fast=True)
     basic_click.click()
 
     # Assert
@@ -78,7 +79,7 @@ def test_BasicClickStrategy_prints_random_time_when_sleep_time_is_None(
     mock_gui_click = mocker.patch(click_patch_str)
 
     # Act
-    basic_click = BasicClickStrategy(name=name, debug=True)
+    basic_click = BasicClickStrategy(debug=True)
     basic_click.click()
 
     out, err = capsys.readouterr()

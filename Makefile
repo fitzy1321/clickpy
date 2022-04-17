@@ -1,5 +1,5 @@
 run:
-	poetry run clickpy
+	python -m clickpy
 
 test:
 	poetry run pytest tests/ --cov=clickpy -v
