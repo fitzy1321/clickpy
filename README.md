@@ -1,6 +1,7 @@
 # clickpy
 
-[![Latest Version](https://pypip.in/version/clickpy/badge.svg)](https://pypi.python.org/pypi/clickpy/)
+<!-- [![Latest Version](https://pypip.in/version/clickpy/badge.svg)](https://pypi.python.org/pypi/clickpy/) -->
+![PyPI](https://img.shields.io/pypi/v/clickpy)
 
 Automated mouse clicker script using [PyAutoGUI][1] and [Typer][2].
 
