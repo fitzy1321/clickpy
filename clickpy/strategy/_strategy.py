@@ -12,7 +12,7 @@ _STDOUT = typer.echo
 class ClickStrategy(ABC):
     @abstractmethod
     def click(self) -> None:
-        pass
+        ...  # pragma: no cover
 
 
 class BasicClickStrategy(ClickStrategy):
