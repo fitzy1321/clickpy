@@ -6,6 +6,8 @@ from time import sleep
 import pyautogui
 import typer
 
+_STDOUT = typer.echo
+
 
 class ClickStrategy(ABC):
     @abstractmethod
@@ -13,7 +15,7 @@ class ClickStrategy(ABC):
         pass
 
 
-class BasicClickStrategy(ClickStrategy):  # this line will trigger __init_subclass__
+class BasicClickStrategy(ClickStrategy):
     """The first, very basic clicking strategy I came up with.
 
     Before clicking, __click__ will tell the current thread to sleep.
@@ -21,12 +23,19 @@ class BasicClickStrategy(ClickStrategy):  # this line will trigger __init_subcla
     Else, it will generate a random number between 1 and 180 (3 minutes).
     """
 
-    def __init__(self, **kwargs):
+    min_time = 1
+    max_time = 180
+    debug_msg = "Thread sleeping for {0} seconds."
+
+    def __init__(self, debug=False, fast=False, stdout=None, **kwargs):
         """Init fields."""
-        self.debug = kwargs.pop("debug", False)
-        self.fast = kwargs.pop("fast", False)
-        self.min_bound: int = 1
-        self.max_bound: int = 180
+        if stdout is None:
+            self._print = _STDOUT
+        self.debug = debug
+        self.fast = fast
+
+        if self.fast:
+            self._timer = 0.5
 
     def click(self) -> None:
         """
@@ -39,19 +48,17 @@ class BasicClickStrategy(ClickStrategy):  # this line will trigger __init_subcla
         3. call pyautogui.click()
         Optional: print statements if print_debug = True.
         """
-        timer = 0.5 if self.fast else float(randint(self.min_bound, self.max_bound))
-
-        if self.debug and not self.fast:
-            typer.echo(f"Random thread sleep for {timer} seconds.")
+        if not self.fast:
+            self._timer = float(randint(self.min_time, self.max_time))
 
         if self.debug:
-            typer.echo("Thread sleeping now...")
+            self._print(self.debug_msg.format(self._timer))
 
-        sleep(timer)
+        sleep(self._timer)
         pyautogui.click()
 
         if self.debug:
-            typer.echo("... Clicked")
+            self._print("! Clicked !")
 
 
 class NaturalClickStrategy(ClickStrategy):

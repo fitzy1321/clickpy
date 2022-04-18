@@ -2,7 +2,7 @@ run:
 	poetry run python -m clickpy
 
 test:
-	poetry run pytest tests/ --cov=clickpy -v
+	poetry run pytest tests/ --cov=clickpy -v --capture=tee-sys
 
 coverage:
 	poetry run coverage html && open htmlcov/index.html
