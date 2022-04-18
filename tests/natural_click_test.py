@@ -1,15 +1,15 @@
-# from clickpy.strategy import ClickStrategy, NaturalClickStrategy
-# from pytest import CaptureFixture
-# from pytest_mock import MockerFixture
+from clickpy.strategy import ClickStrategy, NaturalClickStrategy
+from pytest import CaptureFixture
+from pytest_mock import MockerFixture
 
-# from . import click_patch_str
-# from . import natural_name as name
-# from . import randint_patch_str, sleep_patch_str
+_SLEEP_PATH = "clickpy.strategy._strategy.sleep"
+_PYAUTOGUI_CLICK_PATH = "clickpy.strategy._strategy.pyautogui.click"
+_RANDINT_PATH = "clickpy.strategy._strategy.randint"
 
 
-# def test_NaturalClickStrategy_is_ClickProtocol():
-#     """Make sure NaturalClickStrategy implements ClickProtocol."""
-#     assert isinstance(NaturalClickStrategy(), ClickStrategy)  # type: ignore
+def test_NaturalClickStrategy_is_ClickProtocol():
+    """Make sure NaturalClickStrategy implements ClickProtocol."""
+    assert isinstance(NaturalClickStrategy(), ClickStrategy)  # type: ignore
 
 
 # def test_NaturalClickStrategy_works(mocker: MockerFixture):

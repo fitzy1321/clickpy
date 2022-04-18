@@ -64,12 +64,16 @@ class BasicClickStrategy(ClickStrategy):
 class NaturalClickStrategy(ClickStrategy):
     """Click Strategy to replicate a more natural clicking pattern."""
 
-    def __init__(self, **kwargs):
+    min_time = 2
+    max_time = 60
+    debug_msg = "Thread sleeping for {0} seconds."
+
+    def __init__(self, debug=False, stdout=None, **kwargs):
         """Init fields."""
+        if stdout is None:
+            self._print = _STDOUT
         self.debug = kwargs.pop("debug", False)
-        self.min_bound = 5
-        self.max_bound = 60
-        self.wait_times = [1.0, 1.0, 2.5, randint(self.min_bound, self.max_bound)]
+        self.wait_times = [1.0, 1.0, 2.5]
 
     def click(self):
         """Protocol method defined by SupportsClick.
@@ -79,12 +83,13 @@ class NaturalClickStrategy(ClickStrategy):
         In a loop, click mouse then sleep that iterations wait time.
         At the end, get a random time between min and max bounds.
         """
-        for time in self.wait_times:
+        timers = self.wait_times + [float(randint(self.min_time, self.max_time))]
+        for time in timers:
             if self.debug:
-                typer.echo(f"Waiting for {time} sec ...")
+                self._print(self.debug_msg.format(time))
 
             sleep(time)
             pyautogui.click()
 
             if self.debug:
-                typer.echo("... Clicked")
+                self._print("! Clicked !")
