@@ -12,20 +12,20 @@ def test_NaturalClickStrategy_is_ClickProtocol():
     assert isinstance(NaturalClickStrategy(), ClickStrategy)  # type: ignore
 
 
-# def test_NaturalClickStrategy_works(mocker: MockerFixture):
-#     """Make sure __click__() method is working as planned."""
-#     num = 1.0
-#     mock_sleep = mocker.patch(sleep_patch_str)
-#     mock_randit = mocker.patch(randint_patch_str, return_values=num)
-#     mock_clicker = mocker.patch(click_patch_str)
+def test_NaturalClickStrategy_works(mocker: MockerFixture):
+    """Make sure __click__() method is working as planned."""
+    num = 1.0
+    mock_sleep = mocker.patch(_SLEEP_PATH)
+    mock_randit = mocker.patch(_RANDINT_PATH, return_values=num)
+    mock_clicker = mocker.patch(_PYAUTOGUI_CLICK_PATH)
 
-#     natural = NaturalClickStrategy(name=name)
-#     natural.wait_times = [num]
+    natural = NaturalClickStrategy()
+    natural.wait_times = [num]
 
-#     natural.click()
+    natural.click()
 
-#     mock_sleep.assert_called_once_with(num)
-#     mock_clicker.assert_called_once()
+    mock_sleep.assert_called_once_with(num)
+    mock_clicker.assert_called_once()
 
 
 # def test_click_method_with_debug_flag(mocker: MockerFixture, capsys: CaptureFixture):

@@ -1,5 +1,6 @@
 # noqa
 
+import typer
 from clickpy import BasicClickStrategy
 from clickpy.strategy import ClickStrategy
 from pytest import CaptureFixture
@@ -26,6 +27,7 @@ def test_BasicClickStrategy_sets_fast_sleep_time(
     basic_click.click()
 
     # Assert
+    assert basic_click._stdout == typer.echo
     assert basic_click._timer == 0.5
     assert basic_click.fast is True
     mock_sleep.assert_called_once_with(0.5)

@@ -30,7 +30,7 @@ class BasicClickStrategy(ClickStrategy):
     def __init__(self, debug=False, fast=False, stdout=None, **kwargs):
         """Init fields."""
         if stdout is None:
-            self._print = _STDOUT
+            self._stdout = _STDOUT
         self.debug = debug
         self.fast = fast
 
@@ -52,13 +52,13 @@ class BasicClickStrategy(ClickStrategy):
             self._timer = float(randint(self.min_time, self.max_time))
 
         if self.debug:
-            self._print(self.debug_msg.format(self._timer))
+            self._stdout(self.debug_msg.format(self._timer))
 
         sleep(self._timer)
         pyautogui.click()
 
         if self.debug:
-            self._print("! Clicked !")
+            self._stdout("! Clicked !")
 
 
 class NaturalClickStrategy(ClickStrategy):
@@ -71,7 +71,7 @@ class NaturalClickStrategy(ClickStrategy):
     def __init__(self, debug=False, stdout=None, **kwargs):
         """Init fields."""
         if stdout is None:
-            self._print = _STDOUT
+            self._stdout = _STDOUT
         self.debug = kwargs.pop("debug", False)
         self.wait_times = [1.0, 1.0, 2.5]
 
@@ -84,12 +84,15 @@ class NaturalClickStrategy(ClickStrategy):
         At the end, get a random time between min and max bounds.
         """
         timers = self.wait_times + [float(randint(self.min_time, self.max_time))]
+        if self.debug:
+            self._stdout(f"Natural click timers: {timers}.\n")
+
         for time in timers:
             if self.debug:
-                self._print(self.debug_msg.format(time))
+                self._stdout(self.debug_msg.format(time))
 
             sleep(time)
             pyautogui.click()
 
             if self.debug:
-                self._print("! Clicked !")
+                self._stdout("! Clicked !")
