@@ -27,7 +27,7 @@ class BasicClickStrategy(ClickStrategy):
     max_time = 180
     debug_msg = "Thread sleeping for {0} seconds."
 
-    def __init__(self, debug=False, fast=False, stdout=None, **kwargs):
+    def __init__(self, *, debug=False, fast=False, stdout=None, **kwargs):
         """Init fields."""
         if stdout is None:
             self._stdout = _STDOUT
@@ -68,11 +68,11 @@ class NaturalClickStrategy(ClickStrategy):
     max_time = 60
     debug_msg = "Thread sleeping for {0} seconds."
 
-    def __init__(self, debug=False, stdout=None, **kwargs):
+    def __init__(self, *, debug=False, stdout=None, **kwargs):
         """Init fields."""
         if stdout is None:
             self._stdout = _STDOUT
-        self.debug = kwargs.pop("debug", False)
+        self.debug = debug
         self.wait_times = [1.0, 1.0, 2.5]
 
     def click(self):
