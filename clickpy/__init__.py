@@ -16,6 +16,7 @@ __all__ = [
     "DEFAULT_STRATEGY",
     "BasicClickStrategy",
     "ClickStrategy",
+    "ClickStrategyNotFound",
     "NaturalClickStrategy",
     "generate_click_strategy",
 ]
