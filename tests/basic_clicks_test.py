@@ -6,9 +6,9 @@ from clickpy.strategy import ClickStrategy
 from pytest import CaptureFixture
 from pytest_mock import MockerFixture
 
-_SLEEP_PATH = "clickpy.strategy._strategy.sleep"
-_PYAUTOGUI_CLICK_PATH = "clickpy.strategy._strategy.pyautogui.click"
-_RANDINT_PATH = "clickpy.strategy._strategy.randint"
+_SLEEP_PATH = "clickpy.strategy.strategy.sleep"
+_PYAUTOGUI_CLICK_PATH = "clickpy.strategy.strategy.pyautogui.click"
+_RANDINT_PATH = "clickpy.strategy.strategy.randint"
 
 
 def test_BasicClickStrategy_is_SupportsClick():  # noqa

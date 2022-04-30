@@ -1,5 +1,5 @@
 from clickpy.exception import ClickStrategyNotFound
-from clickpy.strategy._strategy import BasicClickStrategy, ClickStrategy, NaturalClickStrategy
+from clickpy.strategy.strategy import BasicClickStrategy, ClickStrategy, NaturalClickStrategy
 
 DEFAULT_STRATEGY = "basic"
 CLICK_STRAEGIES = {DEFAULT_STRATEGY: BasicClickStrategy, "natural": NaturalClickStrategy}

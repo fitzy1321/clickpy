@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from random import randint
 from time import sleep
-from typing import Callable, Optional
+from typing import Callable
 
 import pyautogui
 import typer
