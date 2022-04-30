@@ -18,7 +18,7 @@ def test_NaturalClickStrategy_works(mocker: MockerFixture):
     mock_clicker = mocker.patch(_PYAUTOGUI_CLICK_PATH)
 
     natural = NaturalClickStrategy()
-    natural.wait_times = [num]
+    natural.timers = [num]
 
     natural.click()
 
@@ -35,7 +35,7 @@ def test_click_method_with_debug_flag(mocker: MockerFixture, capsys: CaptureFixt
     mock_clicker = mocker.patch(_PYAUTOGUI_CLICK_PATH)
 
     natural = NaturalClickStrategy(debug=True)
-    natural.wait_times = []
+    natural.timers = []
 
     natural.click()
 

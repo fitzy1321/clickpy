@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 from random import randint
 from time import sleep
+from typing import Callable, Optional
 
 import pyautogui
 import typer
@@ -27,7 +28,9 @@ class BasicClickStrategy(ClickStrategy):
     max_time = 180
     debug_msg = "Thread sleeping for {0} seconds."
 
-    def __init__(self, *, debug=False, fast=False, stdout=None, **kwargs):
+    def __init__(
+        self, *, debug: bool = False, fast: bool = False, stdout: Callable | None = None, **kwargs
+    ):
         """Init fields."""
         if stdout is None:
             self._stdout = _STDOUT
@@ -67,13 +70,13 @@ class NaturalClickStrategy(ClickStrategy):
     min_time = 2
     max_time = 60
     debug_msg = "Thread sleeping for {0} seconds."
+    timers = [1.0, 1.0, 2.5]
 
-    def __init__(self, *, debug=False, stdout=None, **kwargs):
+    def __init__(self, *, debug: bool = False, stdout: Callable | None = None, **kwargs):
         """Init fields."""
         if stdout is None:
             self._stdout = _STDOUT
         self.debug = debug
-        self.wait_times = [1.0, 1.0, 2.5]
 
     def click(self):
         """Protocol method defined by SupportsClick.
@@ -83,7 +86,7 @@ class NaturalClickStrategy(ClickStrategy):
         In a loop, click mouse then sleep that iterations wait time.
         At the end, get a random time between min and max bounds.
         """
-        timers = self.wait_times + [float(randint(self.min_time, self.max_time))]
+        timers = self.timers + [float(randint(self.min_time, self.max_time))]
         if self.debug:
             self._stdout(f"Natural click timers: {timers}.\n")
 

@@ -2,20 +2,21 @@
 # from typing import Tuple
 # from unittest.mock import MagicMock
 
-# import clickpy
-# import typer
+import clickpy
+import typer
+
 # from clickpy import BasicClickStrategy
 # from clickpy.exception import ClickStrategyNotFound
 # from clickpy.strategy import BasicClickStrategy, ClickStrategy
 # from pytest_mock import MockerFixture
-# from typer.testing import CliRunner
+from typer.testing import CliRunner
 
 # from . import basic_name
 
-# app = typer.Typer()
-# app.command()(clickpy.main)
+app = typer.Typer()
+app.command()(clickpy.main)
 
-# runner = CliRunner()
+runner = CliRunner()
 
 
 # # Helper Functions
