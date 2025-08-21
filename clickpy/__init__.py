@@ -20,6 +20,8 @@ __all__ = [
     "generate_click_strategy",
 ]
 
+app = typer.Typer(context_settings={"help_option_names": ['-h', "--help"]})
+
 
 def print_version(value: bool) -> None:
     if not value:
@@ -48,6 +50,7 @@ def print_list(value: bool) -> None:
 # It's okay to use function calls here, because main should only be called once
 # per exceution. But the values will be parsed of typer.Option will be parsed on
 # the first pass.
+@app.command()
 def main(
     debug: bool = typer.Option(False, "--debug", "-d", show_default=False),  # noqa
     fast: bool = typer.Option(False, "--fast", "-f", show_default=False),  # noqa
@@ -107,4 +110,4 @@ def main(
 
 
 def cli():  # pragma: no cover
-    raise SystemExit(typer.run(main))
+    raise SystemExit(app())
