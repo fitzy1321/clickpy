@@ -1,19 +1,22 @@
 """Click Strategy implementation using __init__subclass pattern."""
+
 from abc import ABC, abstractmethod
 from random import randint
 from time import sleep
+from typing import Callable
 
 import pyautogui
 import typer
 
+_STDOUT = typer.echo
+
 
 class ClickStrategy(ABC):
     @abstractmethod
-    def click(self) -> None:
-        pass
+    def click(self) -> None: ...  # pragma: no cover
 
 
-class BasicClickStrategy(ClickStrategy):  # this line will trigger __init_subclass__
+class BasicClickStrategy(ClickStrategy):
     """The first, very basic clicking strategy I came up with.
 
     Before clicking, __click__ will tell the current thread to sleep.
@@ -21,12 +24,26 @@ class BasicClickStrategy(ClickStrategy):  # this line will trigger __init_subcla
     Else, it will generate a random number between 1 and 180 (3 minutes).
     """
 
-    def __init__(self, **kwargs):
+    min_time = 1
+    max_time = 180
+    debug_msg = "Thread sleeping for {0} seconds."
+
+    def __init__(
+        self,
+        *,
+        debug: bool = False,
+        fast: bool = False,
+        stdout: Callable | None = None,
+        **kwargs,
+    ):
         """Init fields."""
-        self.debug = kwargs.pop("debug", False)
-        self.fast = kwargs.pop("fast", False)
-        self.min_bound: int = 1
-        self.max_bound: int = 180
+        if stdout is None:
+            self._stdout = _STDOUT
+        self.debug = debug
+        self.fast = fast
+
+        if self.fast:
+            self._timer = 0.5
 
     def click(self) -> None:
         """
@@ -39,30 +56,34 @@ class BasicClickStrategy(ClickStrategy):  # this line will trigger __init_subcla
         3. call pyautogui.click()
         Optional: print statements if print_debug = True.
         """
-        timer = 0.5 if self.fast else float(randint(self.min_bound, self.max_bound))
-
-        if self.debug and not self.fast:
-            typer.echo(f"Random thread sleep for {timer} seconds.")
+        if not self.fast:
+            self._timer = float(randint(self.min_time, self.max_time))
 
         if self.debug:
-            typer.echo("Thread sleeping now...")
+            self._stdout(self.debug_msg.format(self._timer))
 
-        sleep(timer)
+        sleep(self._timer)
         pyautogui.click()
 
         if self.debug:
-            typer.echo("... Clicked")
+            self._stdout("! Clicked !")
 
 
 class NaturalClickStrategy(ClickStrategy):
     """Click Strategy to replicate a more natural clicking pattern."""
 
-    def __init__(self, **kwargs):
+    min_time = 2
+    max_time = 60
+    debug_msg = "Thread sleeping for {0} seconds."
+    timers = [1.0, 1.0, 2.5]
+
+    def __init__(
+        self, *, debug: bool = False, stdout: Callable | None = None, **kwargs
+    ):
         """Init fields."""
-        self.debug = kwargs.pop("debug", False)
-        self.min_bound = 5
-        self.max_bound = 60
-        self.wait_times = [1.0, 1.0, 2.5, randint(self.min_bound, self.max_bound)]
+        if stdout is None:
+            self._stdout = _STDOUT
+        self.debug = debug
 
     def click(self):
         """Protocol method defined by SupportsClick.
@@ -72,12 +93,16 @@ class NaturalClickStrategy(ClickStrategy):
         In a loop, click mouse then sleep that iterations wait time.
         At the end, get a random time between min and max bounds.
         """
-        for time in self.wait_times:
+        timers = self.timers + [float(randint(self.min_time, self.max_time))]
+        if self.debug:
+            self._stdout(f"Natural click timers: {timers}.\n")
+
+        for time in timers:
             if self.debug:
-                typer.echo(f"Waiting for {time} sec ...")
+                self._stdout(self.debug_msg.format(time))
 
             sleep(time)
             pyautogui.click()
 
             if self.debug:
-                typer.echo("... Clicked")
+                self._stdout("! Clicked !")

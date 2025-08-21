@@ -1,50 +1,55 @@
 from pytest import CaptureFixture
 from pytest_mock import MockerFixture
 
-from clickpy import NaturalClickStrategy
-from clickpy.strategy import ClickStrategy
+from clickpy.strategy import ClickStrategy, NaturalClickStrategy
+
+_SLEEP_PATH = "clickpy.strategy.strategy.sleep"
+_PYAUTOGUI_CLICK_PATH = "clickpy.strategy.strategy.pyautogui.click"
+_RANDINT_PATH = "clickpy.strategy.strategy.randint"
 
 
 def test_NaturalClickStrategy_is_ClickProtocol():
-    """Make sure NaturalClickStrategy implements ClickProtocol."""
-    assert isinstance(NaturalClickStrategy(), ClickStrategy)  # type: ignore
+    assert isinstance(NaturalClickStrategy(), ClickStrategy)
 
 
 def test_NaturalClickStrategy_works(mocker: MockerFixture):
-    """Make sure __click__() method is working as planned."""
-    num = 1.0
-    mock_sleep = mocker.patch("clickpy.click_strategy.natural.sleep")
-    mocker.patch("clickpy.click_strategy.natural.randint", return_values=num)
-    mock_clicker = mocker.patch("clickpy.click_strategy.natural.click")
+    num = 1.5
+    mock_sleep = mocker.patch(_SLEEP_PATH)
+    mock_randit = mocker.patch(_RANDINT_PATH, return_values=num)
+    mock_clicker = mocker.patch(_PYAUTOGUI_CLICK_PATH)
 
     natural = NaturalClickStrategy()
-    natural.wait_times = [num]
+    natural.timers = [num]
 
-    natural.__click__()
+    natural.click()
 
-    mock_sleep.assert_called_once_with(num)
-    mock_clicker.assert_called_once()
+    assert natural.debug is False
+    mock_randit.assert_called_with(
+        NaturalClickStrategy.min_time, NaturalClickStrategy.max_time
+    )
+    mock_sleep.assert_called
+    mock_clicker.assert_called()
 
 
 def test_click_method_with_debug_flag(mocker: MockerFixture, capsys: CaptureFixture):
-    """Make sure debug statements are correct."""
     num = 1.0
-    mock_sleep = mocker.patch("clickpy.click_strategy.natural.sleep")
-    mocker.patch("clickpy.click_strategy.natural.randint", return_values=num)
-    mock_clicker = mocker.patch("clickpy.click_strategy.natural.click")
+    mock_sleep = mocker.patch(_SLEEP_PATH)
+    mock_randit = mocker.patch(_RANDINT_PATH, return_values=num)
+    mock_clicker = mocker.patch(_PYAUTOGUI_CLICK_PATH)
 
     natural = NaturalClickStrategy(debug=True)
-    natural.wait_times = [num]
+    natural.timers = []
 
-    natural.__click__()
+    natural.click()
 
-    out, _ = capsys.readouterr()
+    out, err = capsys.readouterr()
 
-    assert out == f"Waiting for {num} sec ...\n... Clicked\n"
+    assert (
+        out
+        == f"Natural click timers: [{num}].\n\nThread sleeping for {num} seconds.\n! Clicked !\n"
+    )
+    assert err == ""
+    assert natural.debug is True
+    mock_randit.assert_called_once()
     mock_sleep.assert_called_once_with(num)
     mock_clicker.assert_called_once()
-
-
-def test_repr_returns_natural():
-    """Make sure cli repr function returns what I think it does."""
-    assert NaturalClickStrategy.cli_repr() == "natural"

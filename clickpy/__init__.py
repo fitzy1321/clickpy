@@ -1,26 +1,27 @@
 """Clickpy, Automated mouse clicking scripts."""
+
 import typer
 
 from clickpy.exception import ClickStrategyNotFound
 from clickpy.strategy import (
     CLICK_STRAEGIES,
-    DEFAULT_STRATEGY,
     BasicClickStrategy,
     ClickStrategy,
     NaturalClickStrategy,
+    StrategyEnum,
     generate_click_strategy,
 )
 
 __all__ = [
     "CLICK_STRAEGIES",
-    "DEFAULT_STRATEGY",
+    "StrategyEnum",
     "BasicClickStrategy",
     "ClickStrategy",
     "NaturalClickStrategy",
     "generate_click_strategy",
 ]
 
-app = typer.Typer(context_settings={"help_option_names": ['-h', "--help"]})
+app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
 
 def print_version(value: bool) -> None:
@@ -71,7 +72,7 @@ def main(
         callback=print_list,
         is_eager=True,
     ),
-    click_type: str = typer.Option(DEFAULT_STRATEGY, "--type", "-t"),  # noqa
+    click_type: str = typer.Option(StrategyEnum.DEFAULT, "--type", "-t"),  # noqa
 ):
     """Clickpy, Automated mouse clicking with python."""
     message = "Running clickpy. Enter ctrl+c to stop.\n"
@@ -97,7 +98,7 @@ def main(
         while True:
             click_strategy.click()
 
-    except ClickStrategyNotFound:
+    except (ClickStrategyNotFound, TypeError):
         typer.echo(f"Argument {click_type!r} is not a valid clicker type.", err=True)
         exit_code = 1
 
